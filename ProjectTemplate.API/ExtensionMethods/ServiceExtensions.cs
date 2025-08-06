@@ -32,7 +32,7 @@ public static class ServiceExtensions
     public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ProjectTemplateContext>(options =>
-            options.UseSqlite(configuration.GetConnectionString("sqlConnection")));
+            options.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
         services.AddScoped<ProjectTemplateContext>();
     }
 
