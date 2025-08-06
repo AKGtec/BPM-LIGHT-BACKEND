@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProjectTemplate.Contracts\ProjectTemplate.Contracts.csproj" />
+    <ProjectReference Include="..\ProjectTemplate.Service.Contracts\ProjectTemplate.Service.Contracts.csproj" />
+    <ProjectReference Include="..\ProjectTemplate.Models\ProjectTemplate.Models.csproj" />
+    <ProjectReference Include="..\ProjectTemplate.Shared\ProjectTemplate.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,134 @@
+### Business Process Automation API Test Endpoints
+### Base URL: http://localhost:5000
+
+### AUTHENTICATION ENDPOINTS ###
+
+### 1. Register a new user
+POST http://localhost:5000/api/authentication/register
+Content-Type: application/json
+
+{
+  "userName": "testuser",
+  "email": "test@example.com",
+  "password": "Test123!",
+  "confirmPassword": "Test123!",
+  "firstName": "Test",
+  "lastName": "User",
+  "phoneNumber": "+1234567890"
+}
+
+###
+
+### 2. Login with admin account (default seeded)
+POST http://localhost:5000/api/authentication/login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "Admin123!"
+}
+
+###
+
+### 3. Login with test user
+POST http://localhost:5000/api/authentication/login
+Content-Type: application/json
+
+{
+  "userName": "testuser",
+  "password": "Test123!"
+}
+
+###
+
+### 4. Get current user profile (requires authentication)
+GET http://localhost:5000/api/authentication/profile
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+###
+
+### BUSINESS PROCESS ENDPOINTS ###
+
+### 5. Get all workflows (no auth required now)
+GET http://localhost:5000/api/workflow
+Accept: application/json
+
+###
+
+### 6. Create a new workflow with steps
+POST http://localhost:5000/api/workflow
+Content-Type: application/json
+
+{
+  "name": "Leave Request Workflow",
+  "description": "Standard workflow for processing leave requests",
+  "version": 1,
+  "isActive": true,
+  "steps": [
+    {
+      "stepName": "Manager Approval",
+      "order": 1,
+      "responsibleRole": "Manager",
+      "dueInHours": 24
+    },
+    {
+      "stepName": "HR Review",
+      "order": 2,
+      "responsibleRole": "HR",
+      "dueInHours": 48
+    },
+    {
+      "stepName": "Final Approval",
+      "order": 3,
+      "responsibleRole": "Director",
+      "dueInHours": 72
+    }
+  ]
+}
+
+###
+
+### 3. Get active workflows
+GET http://localhost:5000/api/workflow/active
+Accept: application/json
+
+###
+
+### 4. Get all requests (should return empty initially)
+GET http://localhost:5000/api/request
+Accept: application/json
+
+###
+
+### 5. Get all notifications (should return empty initially)
+GET http://localhost:5000/api/notification
+Accept: application/json
+
+###
+
+### 6. Create a test user first (this would normally be done through authentication)
+### Note: This endpoint might not exist yet, but shows the intended flow
+
+### 7. Create a new request (requires authentication)
+### POST http://localhost:5000/api/request
+### Content-Type: application/json
+### Authorization: Bearer YOUR_JWT_TOKEN
+### 
+### {
+###   "type": 1,
+###   "title": "Annual Leave Request",
+###   "description": "Requesting 5 days annual leave from March 1-5, 2024",
+###   "workflowId": "WORKFLOW_ID_FROM_STEP_2"
+### }
+
+###
+
+### 8. Get workflow with steps (replace {id} with actual workflow ID from step 2)
+### GET http://localhost:5000/api/workflow/{id}/steps
+### Accept: application/json
+
+###
+
+### 9. Health check - Test if API is running
+GET http://localhost:5000/api/weatherforecast
+Accept: application/json

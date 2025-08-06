@@ -1,0 +1,22 @@
+# Steps to Use the Template for a New Project
+
+## 1. Copy Template
+## 2. Run Setup Script
+## 3. Update Connection String
+## 4. Update JWT Secret
+## 5. Update CORS Origins
+## 6. Restore NuGet Packages
+## 7. Create Database Migration
+## 8. Update Database
+## 9. Build Solution
+## 10. Run Application
+## 11. Test API Endpoints
+## 12. Add Your Entities
+## 13. Create Repositories
+## 14. Create Services
+## 15. Create Controllers
+## 16. Configure Additional Services
+## 17. Update Documentation
+## 18. Initialize Git Repository
+## 19. Deploy to Environment
+## 20. Monitor and Maintain
