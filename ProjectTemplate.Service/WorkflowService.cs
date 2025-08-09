@@ -15,10 +15,14 @@ public class WorkflowService : BaseService<WorkflowDto, Workflow>, IWorkflowServ
     {
     }
 
-    public override async Task<IEnumerable<WorkflowDto>> GetAllAsync(RequestParameters parameters, bool trackChanges)
+    public override async Task<PaginatedResponse<WorkflowDto>> GetAllAsync(RequestParameters parameters, bool trackChanges)
     {
         var workflows = await _repository.Workflow.GetAllWorkflowsAsync(parameters, trackChanges);
-        return _mapper.Map<IEnumerable<WorkflowDto>>(workflows);
+        var totalCount = await _repository.Workflow.GetWorkflowCountAsync();
+
+        var workflowDtos = _mapper.Map<IEnumerable<WorkflowDto>>(workflows);
+
+        return new PaginatedResponse<WorkflowDto>(workflowDtos, totalCount, parameters.PageNumber, parameters.PageSize);
     }
 
     public override async Task<WorkflowDto?> GetByIdAsync(Guid id, bool trackChanges)

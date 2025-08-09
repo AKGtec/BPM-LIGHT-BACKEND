@@ -49,6 +49,9 @@ public static class ServiceExtensions
         services.AddScoped<IWorkflowRepository, WorkflowRepository>();
         services.AddScoped<IRequestRepository, RequestRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<ILeaveRepository, LeaveRepository>();
+        services.AddScoped<ILeaveBalanceRepository, LeaveBalanceRepository>();
+        services.AddScoped<IPerformanceReviewRepository, PerformanceReviewRepository>();
     }
 
     public static void ConfigureServiceManager(this IServiceCollection services)
@@ -60,6 +63,8 @@ public static class ServiceExtensions
         services.AddScoped<IRequestService, RequestService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<ILeaveService, LeaveService>();
+        services.AddScoped<IPerformanceReviewService, PerformanceReviewService>();
     }
 
     public static void ConfigureAutoMapper(this IServiceCollection services)

@@ -53,6 +53,11 @@ public class NotificationRepository : RepositoryBase<Notification>, INotificatio
             .CountAsync();
     }
 
+    public async Task<int> GetNotificationCountAsync()
+    {
+        return await FindAll(false).CountAsync();
+    }
+
     public void CreateNotification(Notification notification) => Create(notification);
 
     public void DeleteNotification(Notification notification) => Delete(notification);

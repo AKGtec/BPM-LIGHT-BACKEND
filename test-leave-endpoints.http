@@ -1,0 +1,175 @@
+### Leave Management API Tests
+
+@baseUrl = https://localhost:7001/api
+@token = your-jwt-token-here
+
+### Get all leave requests
+GET {{baseUrl}}/Leave
+Authorization: Bearer {{token}}
+
+### Get all leave requests with pagination and filtering
+GET {{baseUrl}}/Leave?pageNumber=1&pageSize=10&searchTerm=John&status=0&type=0
+Authorization: Bearer {{token}}
+
+### Get pending leave requests
+GET {{baseUrl}}/Leave/pending
+Authorization: Bearer {{token}}
+
+### Get my leave requests
+GET {{baseUrl}}/Leave/my-requests
+Authorization: Bearer {{token}}
+
+### Get leave request by ID
+GET {{baseUrl}}/Leave/{{$guid}}
+Authorization: Bearer {{token}}
+
+### Create a new leave request
+POST {{baseUrl}}/Leave
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="employeeId"
+
+emp001
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="leaveType"
+
+0
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="startDate"
+
+2024-12-01
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="endDate"
+
+2024-12-05
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="reason"
+
+Family vacation
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Create leave request (JSON alternative)
+POST {{baseUrl}}/Leave
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "employeeId": "emp001",
+  "leaveType": 0,
+  "startDate": "2024-12-01T00:00:00Z",
+  "endDate": "2024-12-05T00:00:00Z",
+  "reason": "Family vacation"
+}
+
+### Approve leave request
+POST {{baseUrl}}/Leave/{{$guid}}/approve
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "comments": "Approved for family vacation"
+}
+
+### Reject leave request
+POST {{baseUrl}}/Leave/{{$guid}}/reject
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "comments": "Insufficient leave balance"
+}
+
+### Cancel leave request
+POST {{baseUrl}}/Leave/{{$guid}}/cancel
+Authorization: Bearer {{token}}
+
+### Bulk approve leave requests
+POST {{baseUrl}}/Leave/bulk-approve
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "ids": [
+    "{{$guid}}",
+    "{{$guid}}"
+  ],
+  "comments": "Bulk approval for Q4 requests"
+}
+
+### Bulk reject leave requests
+POST {{baseUrl}}/Leave/bulk-reject
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "ids": [
+    "{{$guid}}",
+    "{{$guid}}"
+  ],
+  "comments": "Bulk rejection due to policy violation"
+}
+
+### Get leave balances (all employees)
+GET {{baseUrl}}/Leave/balances
+Authorization: Bearer {{token}}
+
+### Get leave balances for specific employee
+GET {{baseUrl}}/Leave/balances?employeeId=emp001
+Authorization: Bearer {{token}}
+
+### Get my leave balances
+GET {{baseUrl}}/Leave/my-balances
+Authorization: Bearer {{token}}
+
+### Update leave balance
+POST {{baseUrl}}/Leave/balances/adjust
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "employeeId": "emp001",
+  "leaveType": 0,
+  "adjustment": 5,
+  "reason": "Annual leave allocation adjustment"
+}
+
+### Get leave types configuration
+GET {{baseUrl}}/Leave/types
+Authorization: Bearer {{token}}
+
+### Get leave statistics
+GET {{baseUrl}}/Leave/statistics
+Authorization: Bearer {{token}}
+
+### Get leave statistics with date range
+GET {{baseUrl}}/Leave/statistics?startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer {{token}}
+
+### Export leave report (Excel)
+GET {{baseUrl}}/Leave/export?format=excel
+Authorization: Bearer {{token}}
+
+### Export leave report (PDF) with date range
+GET {{baseUrl}}/Leave/export?format=pdf&startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer {{token}}
+
+### Get leave type label
+GET {{baseUrl}}/Leave/types/0/label
+Authorization: Bearer {{token}}
+
+### Get leave status label
+GET {{baseUrl}}/Leave/status/1/label
+Authorization: Bearer {{token}}
+
+### Calculate leave days
+GET {{baseUrl}}/Leave/calculate-days?startDate=2024-12-01&endDate=2024-12-05
+Authorization: Bearer {{token}}
+
+### Test different leave types
+# AnnualLeave = 0, SickLeave = 1, PersonalLeave = 2, MaternityLeave = 3, 
+# PaternityLeave = 4, EmergencyLeave = 5, StudyLeave = 6, UnpaidLeave = 7
+
+### Test different leave statuses
+# Pending = 0, Approved = 1, Rejected = 2, Cancelled = 3

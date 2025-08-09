@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectTemplate.Models.DataSource;
 
@@ -11,9 +12,11 @@ using ProjectTemplate.Models.DataSource;
 namespace ProjectTemplate.Models.Migrations
 {
     [DbContext(typeof(ProjectTemplateContext))]
-    partial class ProjectTemplateContextModelSnapshot : ModelSnapshot
+    [Migration("20250809162912_AddHREntitiesFixed")]
+    partial class AddHREntitiesFixed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

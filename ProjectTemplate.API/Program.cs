@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using System.Text;
 using ProjectTemplate.API.ExtensionMethods;
 using ProjectTemplate.API.Extensions;
@@ -40,7 +41,7 @@ builder.Services.AddControllersWithViews(config => {
 })
     .AddNewtonsoftJson(options =>
     {
-        options.SerializerSettings.ContractResolver = new DefaultContractResolver() { };
+        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     })
@@ -132,5 +133,6 @@ app.MapControllers();
 // Seed data
 await DataSeeder.SeedRolesAsync(app.Services);
 await DataSeeder.SeedAdminUserAsync(app.Services);
+await DataSeeder.SeedDefaultWorkflowsAsync(app.Services);
 
 app.Run();

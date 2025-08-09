@@ -364,4 +364,75 @@ public class AuthenticationService : IAuthenticationService
             Roles = roles
         };
     }
+
+    public async Task<IdentityResult> UpdateUserProfileAsync(string userId, UpdateProfileDto updateProfileDto)
+    {
+        try
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            }
+
+            // Update user properties only if they are provided (not null or empty)
+            if (!string.IsNullOrWhiteSpace(updateProfileDto.UserName))
+            {
+                // Check if username is already taken by another user
+                var existingUser = await _userManager.FindByNameAsync(updateProfileDto.UserName);
+                if (existingUser != null && existingUser.Id != userId)
+                {
+                    return IdentityResult.Failed(new IdentityError { Description = "Username is already taken." });
+                }
+                user.UserName = updateProfileDto.UserName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(updateProfileDto.Email))
+            {
+                // Check if email is already taken by another user
+                var existingUser = await _userManager.FindByEmailAsync(updateProfileDto.Email);
+                if (existingUser != null && existingUser.Id != userId)
+                {
+                    return IdentityResult.Failed(new IdentityError { Description = "Email is already taken." });
+                }
+                user.Email = updateProfileDto.Email;
+                user.EmailConfirmed = false; // Require email re-confirmation
+            }
+
+            if (!string.IsNullOrWhiteSpace(updateProfileDto.PhoneNumber))
+            {
+                user.PhoneNumber = updateProfileDto.PhoneNumber;
+            }
+
+            // Note: IdentityUser doesn't have FirstName/LastName by default
+            // If you have a custom user class that extends IdentityUser, you can update these:
+            // if (!string.IsNullOrWhiteSpace(updateProfileDto.FirstName))
+            //     user.FirstName = updateProfileDto.FirstName;
+            // if (!string.IsNullOrWhiteSpace(updateProfileDto.LastName))
+            //     user.LastName = updateProfileDto.LastName;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                _logger.LogInfo($"User profile updated successfully for user {user.UserName}");
+            }
+            else
+            {
+                _logger.LogError($"Failed to update user profile for user {user.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error updating user profile: {ex.Message}");
+            return IdentityResult.Failed(new IdentityError { Description = "An error occurred while updating the profile." });
+        }
+    }
+
+    Task IAuthenticationService.UpdateUserProfileAsync(string userId, UpdateProfileDto updateProfileDto)
+    {
+        return UpdateUserProfileAsync(userId, updateProfileDto);
+    }
 }

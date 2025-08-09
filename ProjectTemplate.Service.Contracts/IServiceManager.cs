@@ -6,4 +6,6 @@ public interface IServiceManager
     IRequestService RequestService { get; }
     INotificationService NotificationService { get; }
     IAuthenticationService AuthenticationService { get; }
+    ILeaveService LeaveService { get; }
+    IPerformanceReviewService PerformanceReviewService { get; }
 }

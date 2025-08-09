@@ -15,10 +15,14 @@ public class NotificationService : BaseService<NotificationDto, Notification>, I
     {
     }
 
-    public override async Task<IEnumerable<NotificationDto>> GetAllAsync(RequestParameters parameters, bool trackChanges)
+    public override async Task<PaginatedResponse<NotificationDto>> GetAllAsync(RequestParameters parameters, bool trackChanges)
     {
         var notifications = await _repository.Notification.GetAllNotificationsAsync(parameters, trackChanges);
-        return _mapper.Map<IEnumerable<NotificationDto>>(notifications);
+        var totalCount = await _repository.Notification.GetNotificationCountAsync();
+
+        var notificationDtos = _mapper.Map<IEnumerable<NotificationDto>>(notifications);
+
+        return new PaginatedResponse<NotificationDto>(notificationDtos, totalCount, parameters.PageNumber, parameters.PageSize);
     }
 
     public override async Task<NotificationDto?> GetByIdAsync(Guid id, bool trackChanges)

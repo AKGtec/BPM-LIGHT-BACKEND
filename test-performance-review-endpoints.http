@@ -1,0 +1,247 @@
+### Performance Review Management API Tests
+
+@baseUrl = https://localhost:7001/api
+@token = your-jwt-token-here
+
+### Get all performance reviews
+GET {{baseUrl}}/PerformanceReview
+Authorization: Bearer {{token}}
+
+### Get all performance reviews with pagination and filtering
+GET {{baseUrl}}/PerformanceReview?pageNumber=1&pageSize=10&searchTerm=Annual&status=1&type=0&priority=2
+Authorization: Bearer {{token}}
+
+### Get my performance reviews
+GET {{baseUrl}}/PerformanceReview/my-reviews
+Authorization: Bearer {{token}}
+
+### Get my performance reviews with filtering
+GET {{baseUrl}}/PerformanceReview/my-reviews?status=1&type=0&sortBy=dueDate&sortDirection=desc
+Authorization: Bearer {{token}}
+
+### Get pending performance reviews
+GET {{baseUrl}}/PerformanceReview/pending
+Authorization: Bearer {{token}}
+
+### Get performance review by ID
+GET {{baseUrl}}/PerformanceReview/{{$guid}}
+Authorization: Bearer {{token}}
+
+### Create a new performance review
+POST {{baseUrl}}/PerformanceReview
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Annual Performance Review 2024",
+  "employeeId": "emp001",
+  "reviewType": 0,
+  "dueDate": "2024-12-31T00:00:00Z",
+  "priority": 2,
+  "description": "Annual performance evaluation for 2024",
+  "goals": [
+    "Improve technical skills",
+    "Enhance leadership capabilities",
+    "Complete certification"
+  ]
+}
+
+### Update an existing performance review
+PUT {{baseUrl}}/PerformanceReview/{{$guid}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Updated Annual Review 2024",
+  "reviewType": 0,
+  "dueDate": "2024-12-15T00:00:00Z",
+  "priority": 3,
+  "description": "Updated annual performance evaluation",
+  "goals": [
+    "Complete all assigned projects",
+    "Mentor junior team members",
+    "Achieve technical certification"
+  ],
+  "progress": 50,
+  "feedback": "Good progress so far",
+  "rating": 4.0
+}
+
+### Delete a performance review
+DELETE {{baseUrl}}/PerformanceReview/{{$guid}}
+Authorization: Bearer {{token}}
+
+### Start a performance review
+POST {{baseUrl}}/PerformanceReview/{{$guid}}/start
+Authorization: Bearer {{token}}
+
+### Complete a performance review
+POST {{baseUrl}}/PerformanceReview/{{$guid}}/complete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "feedback": "Excellent performance throughout the review period. All goals were met and exceeded expectations.",
+  "rating": 4.5
+}
+
+### Cancel a performance review
+POST {{baseUrl}}/PerformanceReview/{{$guid}}/cancel
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "reason": "Employee has left the company"
+}
+
+### Cancel a performance review without reason
+POST {{baseUrl}}/PerformanceReview/{{$guid}}/cancel
+Authorization: Bearer {{token}}
+
+### Bulk update status of performance reviews
+POST {{baseUrl}}/PerformanceReview/bulk-update-status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "ids": [
+    "{{$guid}}",
+    "{{$guid}}"
+  ],
+  "status": 1
+}
+
+### Bulk delete performance reviews
+POST {{baseUrl}}/PerformanceReview/bulk-delete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "ids": [
+    "{{$guid}}",
+    "{{$guid}}"
+  ]
+}
+
+### Get performance review statistics
+GET {{baseUrl}}/PerformanceReview/statistics
+Authorization: Bearer {{token}}
+
+### Get performance review statistics with date range
+GET {{baseUrl}}/PerformanceReview/statistics?startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer {{token}}
+
+### Export performance reviews (Excel)
+GET {{baseUrl}}/PerformanceReview/export?format=excel
+Authorization: Bearer {{token}}
+
+### Export performance reviews (PDF) with date range
+GET {{baseUrl}}/PerformanceReview/export?format=pdf&startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer {{token}}
+
+### Get review type label
+GET {{baseUrl}}/PerformanceReview/types/0/label
+Authorization: Bearer {{token}}
+
+### Get review status label
+GET {{baseUrl}}/PerformanceReview/status/1/label
+Authorization: Bearer {{token}}
+
+### Get review priority label
+GET {{baseUrl}}/PerformanceReview/priority/2/label
+Authorization: Bearer {{token}}
+
+### Get review type options for dropdowns
+GET {{baseUrl}}/PerformanceReview/types/options
+Authorization: Bearer {{token}}
+
+### Get review status options for dropdowns
+GET {{baseUrl}}/PerformanceReview/status/options
+Authorization: Bearer {{token}}
+
+### Get review priority options for dropdowns
+GET {{baseUrl}}/PerformanceReview/priority/options
+Authorization: Bearer {{token}}
+
+### Test different review types
+# Annual = 0, Quarterly = 1, Probationary = 2, Project = 3, ThreeSixty = 4, MidYear = 5
+
+### Test different review statuses
+# Draft = 0, InProgress = 1, Completed = 2, Overdue = 3, Cancelled = 4
+
+### Test different review priorities
+# Low = 0, Medium = 1, High = 2, Critical = 3
+
+### Create Quarterly Review
+POST {{baseUrl}}/PerformanceReview
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Q4 2024 Quarterly Review",
+  "employeeId": "emp002",
+  "reviewType": 1,
+  "dueDate": "2024-12-31T00:00:00Z",
+  "priority": 1,
+  "description": "Quarterly performance review for Q4 2024",
+  "goals": [
+    "Complete quarterly objectives",
+    "Improve team collaboration"
+  ]
+}
+
+### Create Probationary Review
+POST {{baseUrl}}/PerformanceReview
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "3-Month Probationary Review",
+  "employeeId": "emp003",
+  "reviewType": 2,
+  "dueDate": "2024-11-30T00:00:00Z",
+  "priority": 3,
+  "description": "Probationary period evaluation",
+  "goals": [
+    "Complete onboarding process",
+    "Demonstrate core competencies",
+    "Integrate with team"
+  ]
+}
+
+### Create 360-Degree Review
+POST {{baseUrl}}/PerformanceReview
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "360-Degree Leadership Review",
+  "employeeId": "emp004",
+  "reviewType": 4,
+  "dueDate": "2024-12-15T00:00:00Z",
+  "priority": 2,
+  "description": "Comprehensive 360-degree feedback review",
+  "goals": [
+    "Gather feedback from peers",
+    "Assess leadership skills",
+    "Identify development areas"
+  ]
+}
+
+### Advanced filtering examples
+
+### Filter by multiple criteria
+GET {{baseUrl}}/PerformanceReview?status=1&type=0&priority=2&employeeId=emp001&startDate=2024-01-01&endDate=2024-12-31
+Authorization: Bearer {{token}}
+
+### Search with sorting
+GET {{baseUrl}}/PerformanceReview?searchTerm=Annual&sortBy=dueDate&sortDirection=asc&pageSize=5
+Authorization: Bearer {{token}}
+
+### Get overdue reviews (status 3)
+GET {{baseUrl}}/PerformanceReview?status=3&sortBy=dueDate&sortDirection=asc
+Authorization: Bearer {{token}}
+
+### Get high priority reviews
+GET {{baseUrl}}/PerformanceReview?priority=2&sortBy=priority&sortDirection=desc
+Authorization: Bearer {{token}}

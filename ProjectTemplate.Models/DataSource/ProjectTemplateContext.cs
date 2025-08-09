@@ -17,6 +17,11 @@ public class ProjectTemplateContext : IdentityDbContext
     public DbSet<RequestStep> RequestSteps { get; set; }
     public DbSet<Notification> Notifications { get; set; }
 
+    // HR Management DbSets
+    public DbSet<Leave> Leaves { get; set; }
+    public DbSet<LeaveBalance> LeaveBalances { get; set; }
+    public DbSet<PerformanceReview> PerformanceReviews { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -78,5 +83,70 @@ public class ProjectTemplateContext : IdentityDbContext
         modelBuilder.Entity<WorkflowStep>()
             .HasIndex(ws => new { ws.WorkflowId, ws.Order })
             .IsUnique();
+
+        // Configure Leave relationships
+        modelBuilder.Entity<Leave>()
+            .HasOne(l => l.Employee)
+            .WithMany()
+            .HasForeignKey(l => l.EmployeeId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Leave>()
+            .HasOne(l => l.Approver)
+            .WithMany()
+            .HasForeignKey(l => l.ApprovedBy)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Leave>()
+            .HasOne(l => l.Rejector)
+            .WithMany()
+            .HasForeignKey(l => l.RejectedBy)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // Configure LeaveBalance relationships
+        modelBuilder.Entity<LeaveBalance>()
+            .HasOne(lb => lb.Employee)
+            .WithMany()
+            .HasForeignKey(lb => lb.EmployeeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure PerformanceReview relationships
+        modelBuilder.Entity<PerformanceReview>()
+            .HasOne(pr => pr.Employee)
+            .WithMany()
+            .HasForeignKey(pr => pr.EmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PerformanceReview>()
+            .HasOne(pr => pr.Reviewer)
+            .WithMany()
+            .HasForeignKey(pr => pr.ReviewerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure indexes for HR entities
+        modelBuilder.Entity<Leave>()
+            .HasIndex(l => l.EmployeeId);
+
+        modelBuilder.Entity<Leave>()
+            .HasIndex(l => l.Status);
+
+        modelBuilder.Entity<Leave>()
+            .HasIndex(l => new { l.StartDate, l.EndDate });
+
+        modelBuilder.Entity<LeaveBalance>()
+            .HasIndex(lb => new { lb.EmployeeId, lb.LeaveType, lb.Year })
+            .IsUnique();
+
+        modelBuilder.Entity<PerformanceReview>()
+            .HasIndex(pr => pr.EmployeeId);
+
+        modelBuilder.Entity<PerformanceReview>()
+            .HasIndex(pr => pr.Status);
+
+        modelBuilder.Entity<PerformanceReview>()
+            .HasIndex(pr => pr.DueDate);
+
+        modelBuilder.Entity<PerformanceReview>()
+            .HasIndex(pr => pr.ReviewerId);
     }
 }

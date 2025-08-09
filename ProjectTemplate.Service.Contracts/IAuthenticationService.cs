@@ -19,4 +19,5 @@ public interface IAuthenticationService
     Task<IdentityResult> AddUserToRoleAsync(string userId, string roleName);
     Task<IdentityResult> RemoveUserFromRoleAsync(string userId, string roleName);
     Task<IList<string>> GetUserRolesAsync(string userId);
+    Task UpdateUserProfileAsync(string userId, UpdateProfileDto updateProfileDto);
 }

@@ -214,7 +214,7 @@ public class AuthenticationController : BaseApiController
     /// Get all users (Admin only)
     /// </summary>
     [HttpGet("users")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,HR")]
     public async Task<IActionResult> GetAllUsers()
     {
         try
@@ -323,4 +323,112 @@ public class AuthenticationController : BaseApiController
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+    /// <summary>
+    /// Update current user profile
+    /// </summary>
+    [HttpPut("profile")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
+    {
+        try
+        {
+            if (updateProfileDto == null)
+                return BadRequest("Update profile data is null.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User ID not found in token.");
+
+            await _serviceManager.AuthenticationService.UpdateUserProfileAsync(userId, updateProfileDto);
+
+            return Ok("Profile updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+
+
+    /// <summary>
+    /// Delete user (Admin only)
+    /// </summary>
+    [HttpDelete("users/{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(id))
+                return BadRequest("User ID is required.");
+
+            // Prevent admin from deleting themselves
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (currentUserId == id)
+                return BadRequest("You cannot delete your own account.");
+
+            var user = await _serviceManager.AuthenticationService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound("User not found.");
+
+            var result = await _serviceManager.AuthenticationService.DeleteUserAsync(id);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return BadRequest(errors);
+            }
+
+            return Ok("User deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Update user (Admin only)
+    /// </summary>
+    [HttpPut("users/{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateUser(string id, [FromBody] UserDto updateUserDto)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(id))
+                return BadRequest("User ID is required.");
+
+            if (updateUserDto == null)
+                return BadRequest("Update user data is null.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _serviceManager.AuthenticationService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound("User not found.");
+
+            var result = await _serviceManager.AuthenticationService.UpdateUserAsync(id, updateUserDto);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return BadRequest(errors);
+            }
+
+            return Ok("User updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+
 }

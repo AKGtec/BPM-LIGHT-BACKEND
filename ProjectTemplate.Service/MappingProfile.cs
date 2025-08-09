@@ -92,5 +92,116 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
             .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore());
+
+        // Leave mappings
+        CreateMap<Leave, LeaveRequestDto>()
+            .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.UserName ?? string.Empty))
+            .ForMember(dest => dest.EmployeeEmail, opt => opt.MapFrom(src => src.Employee.Email ?? string.Empty))
+            .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => 
+                DeserializeAttachments(src.AttachmentPaths)));
+
+        CreateMap<CreateLeaveRequestDto, Leave>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => LeaveStatus.Pending))
+            .ForMember(dest => dest.SubmittedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => false))
+            .ForMember(dest => dest.Employee, opt => opt.Ignore())
+            .ForMember(dest => dest.Approver, opt => opt.Ignore())
+            .ForMember(dest => dest.Rejector, opt => opt.Ignore())
+            .ForMember(dest => dest.AttachmentPaths, opt => opt.Ignore());
+
+        // LeaveBalance mappings
+        CreateMap<LeaveBalance, LeaveBalanceDto>()
+            .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.UserName ?? string.Empty));
+
+        CreateMap<UpdateLeaveBalanceDto, LeaveBalance>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.EmployeeId, opt => opt.Ignore())
+            .ForMember(dest => dest.LeaveType, opt => opt.Ignore())
+            .ForMember(dest => dest.Year, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+            .ForMember(dest => dest.Employee, opt => opt.Ignore())
+            .ForMember(dest => dest.LastUpdated, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+        // PerformanceReview mappings
+        CreateMap<PerformanceReview, PerformanceReviewDto>()
+            .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.UserName ?? string.Empty))
+            .ForMember(dest => dest.EmployeePosition, opt => opt.MapFrom(src => "Employee")) // Default position, can be enhanced
+            .ForMember(dest => dest.ReviewerName, opt => opt.MapFrom(src => src.Reviewer != null ? src.Reviewer.UserName : null))
+            .ForMember(dest => dest.Goals, opt => opt.MapFrom(src => 
+                DeserializeGoals(src.Goals)));
+
+        CreateMap<CreatePerformanceReviewDto, PerformanceReview>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => ReviewStatus.Draft))
+            .ForMember(dest => dest.Progress, opt => opt.MapFrom(src => 0))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => false))
+            .ForMember(dest => dest.Employee, opt => opt.Ignore())
+            .ForMember(dest => dest.Reviewer, opt => opt.Ignore())
+            .ForMember(dest => dest.Goals, opt => opt.MapFrom(src => 
+                SerializeGoals(src.Goals)));
+
+        CreateMap<UpdatePerformanceReviewDto, PerformanceReview>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.EmployeeId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+            .ForMember(dest => dest.Employee, opt => opt.Ignore())
+            .ForMember(dest => dest.Reviewer, opt => opt.Ignore())
+            .ForMember(dest => dest.Goals, opt => opt.MapFrom(src => 
+                SerializeGoals(src.Goals)))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+    }
+
+    private static List<string> DeserializeAttachments(string? attachmentPaths)
+    {
+        if (string.IsNullOrEmpty(attachmentPaths))
+            return new List<string>();
+        
+        try
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<List<string>>(attachmentPaths) ?? new List<string>();
+        }
+        catch
+        {
+            return new List<string>();
+        }
+    }
+
+    private static List<string> DeserializeGoals(string? goals)
+    {
+        if (string.IsNullOrEmpty(goals))
+            return new List<string>();
+        
+        try
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<List<string>>(goals) ?? new List<string>();
+        }
+        catch
+        {
+            return new List<string>();
+        }
+    }
+
+    private static string? SerializeGoals(List<string>? goals)
+    {
+        if (goals == null || !goals.Any())
+            return null;
+        
+        try
+        {
+            return System.Text.Json.JsonSerializer.Serialize(goals);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

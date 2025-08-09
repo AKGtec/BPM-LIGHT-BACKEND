@@ -23,7 +23,7 @@ public abstract class BaseService<TDto, TEntity> : IBaseService<TDto, TEntity>
         _mapper = mapper;
     }
 
-    public virtual async Task<IEnumerable<TDto>> GetAllAsync(RequestParameters parameters, bool trackChanges)
+    public virtual async Task<PaginatedResponse<TDto>> GetAllAsync(RequestParameters parameters, bool trackChanges)
     {
         // Override this method in derived classes to implement specific logic
         throw new NotImplementedException("GetAllAsync must be implemented in derived class");

@@ -16,10 +16,13 @@ public class WorkflowController : BaseApiController
     /// Get all workflows with pagination
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetWorkflows([FromQuery] RequestParameters parameters)
+    public async Task<IActionResult> GetWorkflows([FromQuery] EntityParameters? parameters)
     {
         try
         {
+            // Provide default parameters if none are provided
+            parameters ??= new EntityParameters();
+
             var workflows = await _serviceManager.WorkflowService.GetAllAsync(parameters, trackChanges: false);
             return Ok(workflows);
         }
@@ -33,10 +36,13 @@ public class WorkflowController : BaseApiController
     /// Get active workflows only
     /// </summary>
     [HttpGet("active")]
-    public async Task<IActionResult> GetActiveWorkflows([FromQuery] RequestParameters parameters)
+    public async Task<IActionResult> GetActiveWorkflows([FromQuery] EntityParameters? parameters)
     {
         try
         {
+            // Provide default parameters if none are provided
+            parameters ??= new EntityParameters();
+
             var workflows = await _serviceManager.WorkflowService.GetActiveWorkflowsAsync(parameters, trackChanges: false);
             return Ok(workflows);
         }

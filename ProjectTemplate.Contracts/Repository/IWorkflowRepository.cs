@@ -9,6 +9,7 @@ public interface IWorkflowRepository : IRepositoryBase<Workflow>
     Task<Workflow?> GetWorkflowAsync(Guid workflowId, bool trackChanges);
     Task<Workflow?> GetWorkflowWithStepsAsync(Guid workflowId, bool trackChanges);
     Task<IEnumerable<Workflow>> GetActiveWorkflowsAsync(RequestParameters parameters, bool trackChanges);
+    Task<int> GetWorkflowCountAsync();
     void CreateWorkflow(Workflow workflow);
     void DeleteWorkflow(Workflow workflow);
 }

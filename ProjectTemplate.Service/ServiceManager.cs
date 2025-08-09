@@ -13,6 +13,8 @@ public sealed class ServiceManager : IServiceManager
     private readonly Lazy<IRequestService> _requestService;
     private readonly Lazy<INotificationService> _notificationService;
     private readonly Lazy<IAuthenticationService> _authenticationService;
+    private readonly Lazy<ILeaveService> _leaveService;
+    private readonly Lazy<IPerformanceReviewService> _performanceReviewService;
 
     public ServiceManager(
         IRepositoryManager repositoryManager,
@@ -27,10 +29,14 @@ public sealed class ServiceManager : IServiceManager
         _requestService = new Lazy<IRequestService>(() => new RequestService(repositoryManager, logger, mapper));
         _notificationService = new Lazy<INotificationService>(() => new NotificationService(repositoryManager, logger, mapper));
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(userManager, signInManager, roleManager, configuration, logger, mapper));
+        _leaveService = new Lazy<ILeaveService>(() => new LeaveService(repositoryManager, logger, mapper));
+        _performanceReviewService = new Lazy<IPerformanceReviewService>(() => new PerformanceReviewService(repositoryManager, logger, mapper));
     }
 
     public IWorkflowService WorkflowService => _workflowService.Value;
     public IRequestService RequestService => _requestService.Value;
     public INotificationService NotificationService => _notificationService.Value;
     public IAuthenticationService AuthenticationService => _authenticationService.Value;
+    public ILeaveService LeaveService => _leaveService.Value;
+    public IPerformanceReviewService PerformanceReviewService => _performanceReviewService.Value;
 }

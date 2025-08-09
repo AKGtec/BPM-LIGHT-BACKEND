@@ -10,6 +10,7 @@ public interface INotificationRepository : IRepositoryBase<Notification>
     Task<IEnumerable<Notification>> GetUserNotificationsAsync(string userId, RequestParameters parameters, bool trackChanges);
     Task<IEnumerable<Notification>> GetUnreadNotificationsAsync(string userId, RequestParameters parameters, bool trackChanges);
     Task<int> GetUnreadCountAsync(string userId, bool trackChanges);
+    Task<int> GetNotificationCountAsync();
     void CreateNotification(Notification notification);
     void DeleteNotification(Notification notification);
 }
